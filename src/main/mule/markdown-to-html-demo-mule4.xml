@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="6e3e9700-c2c2-42e0-897c-bbd6551c6ec3" file="mule-properties.yaml" />
+	<flow name="markdown-to-html-demo-mule4Flow" doc:id="73738f9d-c96b-499b-9d29-e810692c47b9" >
+		<file:listener doc:name="On New or Updated File" doc:id="16722008-659e-4536-81df-a1729bf8d9ce" directory="${file.base}/src/main/resources/in" moveToDirectory="#[p('file.base') ++ &quot;/src/main/resources/processed&quot;]">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</file:listener>
+		<java:invoke-static doc:name="Markdown to HTML" doc:id="5f5e1e69-2a7a-480c-a013-693c43aa47c3" class="com.dejim.MarkdownUtility" method="convertMdToHtml(java.io.InputStream)">
+			<java:args ><![CDATA[#[output application/java
+---
+{
+	arg0: payload
+}]]]></java:args>
+		</java:invoke-static>
+		<file:write doc:name="Write" doc:id="8ff5da6c-7074-4190-82bd-28c33dd45af5" path="#[p('file.base') ++ &quot;/src/main/resources/out/test.html&quot;]"/>
+	</flow>
+</mule>
